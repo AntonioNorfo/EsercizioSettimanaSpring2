@@ -1,4 +1,3 @@
-// payloads/MessaggioDiErrore.java
 package antonio.viaggio.payloads;
 
 import java.time.LocalDateTime;
