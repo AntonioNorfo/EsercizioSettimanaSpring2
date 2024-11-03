@@ -1,8 +1,11 @@
 package antonio.viaggio.controllers;
 
-import antonio.viaggio.entities.Dipendente;
+import antonio.viaggio.payloads.DipendenteDTO;
 import antonio.viaggio.services.DipendenteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +19,32 @@ public class DipendenteController {
     private DipendenteService dipendenteService;
 
     @GetMapping
-    public List<Dipendente> getAllDipendenti() {
-        return dipendenteService.getAllDipendenti();
+    public ResponseEntity<List<DipendenteDTO>> getAllDipendenti() {
+        List<DipendenteDTO> dipendentiDTO = dipendenteService.getAllDipendenti();
+        return ResponseEntity.ok(dipendentiDTO);
     }
 
     @GetMapping("/{id}")
-    public Dipendente getDipendenteById(@PathVariable UUID id) {
-        return dipendenteService.getDipendenteById(id);
+    public ResponseEntity<DipendenteDTO> getDipendenteById(@PathVariable UUID id) {
+        DipendenteDTO dipendenteDTO = dipendenteService.getDipendenteById(id);
+        return ResponseEntity.ok(dipendenteDTO);
     }
 
     @PostMapping
-    public Dipendente createDipendente(@RequestBody Dipendente dipendente) {
-        return dipendenteService.createDipendente(dipendente);
+    public ResponseEntity<DipendenteDTO> createDipendente(@Valid @RequestBody DipendenteDTO dipendenteDTO) {
+        DipendenteDTO nuovoDipendenteDTO = dipendenteService.createDipendente(dipendenteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuovoDipendenteDTO);
     }
 
     @PutMapping("/{id}")
-    public Dipendente updateDipendente(@PathVariable UUID id, @RequestBody Dipendente dipendente) {
-        return dipendenteService.updateDipendente(id, dipendente);
+    public ResponseEntity<DipendenteDTO> updateDipendente(@PathVariable UUID id, @Valid @RequestBody DipendenteDTO dipendenteDTO) {
+        DipendenteDTO dipendenteAggiornatoDTO = dipendenteService.updateDipendente(id, dipendenteDTO);
+        return ResponseEntity.ok(dipendenteAggiornatoDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDipendente(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteDipendente(@PathVariable UUID id) {
         dipendenteService.deleteDipendente(id);
+        return ResponseEntity.noContent().build();
     }
 }

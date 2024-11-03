@@ -1,8 +1,9 @@
 package antonio.viaggio.controllers;
 
-import antonio.viaggio.entities.Viaggio;
 import antonio.viaggio.enums.StatoViaggio;
+import antonio.viaggio.payloads.ViaggioDTO;
 import antonio.viaggio.services.ViaggioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +20,32 @@ public class ViaggioController {
     private ViaggioService viaggioService;
 
     @GetMapping
-    public List<Viaggio> getAllViaggi() {
-        return viaggioService.getAllViaggi();
+    public ResponseEntity<List<ViaggioDTO>> getAllViaggi() {
+        List<ViaggioDTO> viaggiDTO = viaggioService.getAllViaggi();
+        return ResponseEntity.ok(viaggiDTO);
     }
 
     @GetMapping("/{id}")
-    public Viaggio getViaggioById(@PathVariable UUID id) {
-        return viaggioService.getViaggioById(id);
+    public ResponseEntity<ViaggioDTO> getViaggioById(@PathVariable UUID id) {
+        ViaggioDTO viaggioDTO = viaggioService.getViaggioById(id);
+        return ResponseEntity.ok(viaggioDTO);
     }
 
     @PostMapping
-    public ResponseEntity<Viaggio> createViaggio(@RequestBody Viaggio viaggio) {
-        Viaggio nuovoViaggio = viaggioService.createViaggio(viaggio);
-        return new ResponseEntity<>(nuovoViaggio, HttpStatus.CREATED);
+    public ResponseEntity<ViaggioDTO> createViaggio(@Valid @RequestBody ViaggioDTO viaggioDTO) {
+        ViaggioDTO nuovoViaggioDTO = viaggioService.createViaggio(viaggioDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuovoViaggioDTO);
     }
 
     @PutMapping("/{id}/stato")
-    public ResponseEntity<Viaggio> updateStatoViaggio(@PathVariable UUID id, @RequestParam StatoViaggio stato) {
-        Viaggio viaggioAggiornato = viaggioService.updateStatoViaggio(id, stato);
-        return new ResponseEntity<>(viaggioAggiornato, HttpStatus.OK);
+    public ResponseEntity<ViaggioDTO> updateStatoViaggio(@PathVariable UUID id, @RequestParam StatoViaggio stato) {
+        ViaggioDTO viaggioAggiornatoDTO = viaggioService.updateStatoViaggio(id, stato);
+        return ResponseEntity.ok(viaggioAggiornatoDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteViaggio(@PathVariable UUID id) {
         viaggioService.deleteViaggio(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
